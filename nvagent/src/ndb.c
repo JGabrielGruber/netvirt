@@ -392,8 +392,10 @@ ndb_provisioning(const char *provlink, const char *network_name)
 	pki_write_privatekey_in_mem(keyring, &pvkey_pem, &size);
 	EVP_PKEY_free(keyring);
 
-	if ((netcf = ndb_network_new()) == NULL)
+	if ((netcf = ndb_network_new()) == NULL) {
+		printf("Cannot create new network");
 		return (-1);
+	}
 
 	netcf->name = strdup(network_name);
 	netcf->pvkey = pvkey_pem; // Steal the pointer
@@ -404,14 +406,19 @@ ndb_provisioning(const char *provlink, const char *network_name)
 	json_object_set_new(jresp, "provlink", json_string(provlink));
 	resp = json_dumps(jresp, 0);
 
-	if ((uri = evhttp_uri_parse(provlink)) == NULL)
+	if ((uri = evhttp_uri_parse(provlink)) == NULL) {
+		printf("Cannot parse url");
 		return (-1);
+	}
 
-	if ((evhttp_parse_query_str(evhttp_uri_get_query(uri), &headers)) < 0)
+	if ((evhttp_parse_query_str(evhttp_uri_get_query(uri), &headers)) < 0) {
+		printf("Cannot parse query");
 		return (-1);
+	}
 
 	if (((version = evhttp_find_header(&headers, "v")) == NULL) ||
 	    ((provsrv_addr = evhttp_find_header(&headers, "a")) == NULL) ) {
+		printf("Invalid response");
 		return (-1);
 	}
 

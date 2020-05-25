@@ -419,7 +419,7 @@ ndb_provisioning(const char *provlink, const char *network_name)
 	if (((version = evhttp_find_header(&headers, "v")) == NULL) ||
 	    ((provsrv_addr = evhttp_find_header(&headers, "a")) == NULL) ) {
 		printf("Invalid response");
-		return (-1);
+		// return (-1);
 	}
 
 
